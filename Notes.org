@@ -1,0 +1,211 @@
+** Introduction
+
+Django is a web framework. A framework is a collection of modular tools that
+abstracts much of the difficculty and repetition inherent in web development.
+
+** Initial Set Up
+*** The Command Line
+Six commands used most frequently in Diango development:
+  1.cd
+  2.cd ..
+  3.ls
+  4.pwd
+  5.mkdir
+  6.touch
+*** Install Python3
+*** Virtual Environments
+*** Install Django
+*** Install Git
+*** Text Editors
+** Hello World App
+*** Initial Set up
+#+begin_src shell
+  mkdir helloworld && cd helloworld
+  pipenv install django~=3.1.0
+  pipenv shell
+#+end_src
+
+#+begin_src shell
+  django-admin startproject config .
+  tree
+  .
+  ├── Pipfile
+  ├── Pipfile.lock
+  ├── config
+  │   ├── __init__.py
+  │   ├── asgi.py      # 异步服务器网关接口
+  │   ├── settings.py  # 项目的配置文件
+  │   ├── urls.py      # URL 请求
+  │   └── wsgi.py      # Web 服务器网关接口
+  └── manage.py        # 执行 Django 命令
+#+end_src
+
+#+begin_src shell
+  python manage.py runserver # 运行 Django 程序
+  python manage.py migrate   # 消除 Warning 提示
+#+end_src
+*** Create An App
+Django 使用 **项目** 和 **应用程序** 的概念来保证代码的清洁和可读性。
+一个 Django 项目包括一个或多个应用程序。
+#+begin_src shell
+  python manage.py startapp pages
+  ├── pages
+  │   ├── __init__.py
+  │   ├── admin.py        # 内置的 Django Admin 应用程序的配置文件
+  │   ├── apps.py         # 当前应用程序的配置文件
+  │   ├── migrations      # 跟踪我们对 models.py 的任何改变
+  │   │   └── __init__.py
+  │   ├── models.py       # 定义数据库模型的地方，Django 会将其自动翻译为数据库表
+  │   ├── tests.py        
+  │   └── views.py        # 处理 Web 程序请求/响应逻辑
+#+end_src
+
+创建一个 App 之后，项目还不知道这个 App 的存在，我们需要在 config/setting.py 中添加 App
+#+begin_src python
+  # config/settings.py
+  INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'pages', # new                         <--------- This
+  ]
+#+end_src
+*** URLs, Views, Models, Templates
+In Django, we need three (often four) separate files.
+  - urls.py
+  - views.py
+  - models.py
+  - index,html
+
+HTTP request/response cycle:
+  1. Type in a URL
+  2. URLpattern is found that matches the homepage
+  3. Result an HTTP response
+
+URL -> View -> Model(typically) -> Template
+
+The views determine what content is displayed on a given page.
+The URL determine where that content is going.
+The model contains the content from the database.
+The template provides sytling for it
+
+#+begin_src
+The `urlpatterns` list routes URLs to views. For more information please see:
+    https://docs.djangoproject.com/en/3.1/topics/http/urls/
+Examples:
+Function views
+    1. Add an import:  from my_app import views
+    2. Add a URL to urlpatterns:  path('', views.home, name='home')
+Class-based views
+    1. Add an import:  from other_app.views import Home
+    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
+Including another URLconf
+    1. Import the include() function: from django.urls import include, path
+    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+
+#+end_src
+*** Git
+#+begin_src
+  git init
+
+  git status
+
+  git add -A
+
+  git commit -m ""
+
+  git remote add origin [link]
+
+  git push -u origin main
+
+#+end_src
+*** SSH
+#+begin_src
+  ssh-keygen -t rsa -C ""
+
+#+end_src
+** Pages App
+*** Initial Set Up
+#+begin_src
+  mkdir pages && cd pages
+
+  pipenv install django~=3.1.0
+
+  pipenv shell
+
+  django-admin startproject config .
+
+  python manage.py startapp pages
+
+#+end_src
+*** Templates
+Templates 用来生成 HTML 文件。
+
+将视图链接到模版，从而将每个视图中包含的信息区分开来。
+
+The first consideration is where to place templates within the structure
+of a Django project.There are two options.
+1. By default, Django’s template loader will look within each app for
+   related templates. However the structure is somewhat confusing:
+   each app needs a new templates directory, another directory with the
+   same name as the app, and then the template file.
+2. another approach which is to instead create a single project-level
+   templates directory and place all templates within there. By making a
+   small tweak to our config/settings.py file we can tell Django to also
+   look in this directory for templates.
+*** Class-Based Views
+Django 的早期版本只支持 **基于函数的视图** ，后来人们发现一直在做重复的工作，最后 Django
+包含了 **基于类的视图** 。
+
+使用 内置的TemplateView 展示我们的模版。
+
+#+begin_src python
+  from django.views.generic import TemplateView
+
+#+end_src
+*** URLs
+modified config/urls.py
+#+begin_src python
+  from django.contrib import admin
+  from django.urls import path, include
+
+  urlpatterns = [
+      path('admin/', admin.site.urls),
+      path('', include('pages.urls')),
+
+#+end_src
+
+add pages.urls.py
+
+#+begin_src python
+  from django.urls import path
+  from .views import HomePageView
+
+  urlpatterns = [
+      path('', HomePageView.as_view(), name='home'),
+  ]
+
+#+end_src
+
+when using Class-Based Views, you always add as_view() at the end of
+the view name.
+*** About Page
+1. Create templates/about.html
+2. Create AboutPageView Class in pages/views.py
+3. Modified pages/urls.py to add path info
+*** Extending Templates
+Templates 真正的能力是它是可扩展的。
+Django 内置的模版标签： https://docs.djangoproject.com/en/3.1/ref/templates/builtins/#built-in-template-tags-and-filters
+#+begin_src html
+<header>
+  <a href="{% url 'home' %}"></a> |
+  <a href="{% url 'about' %}"></a>
+</header>
+
+{% block content %}
+{% endblock content %}
+
+#+end_src

@@ -209,3 +209,17 @@ Django 内置的模版标签： https://docs.djangoproject.com/en/3.1/ref/templa
 {% endblock content %}
 
 #+end_src
+*** Tests
+编写测试是为了确认代码正常工作的过程。
+pages/test.py
+#+begin_src python
+  from django.test import SimpleTestCase
+
+  class SimpleTests(SimpleTestCase):
+      def test_home_page_status_code(self):
+	  response = self.client.get('/')
+	  self.assertEqual(response.status_code, 200)
+      def test_about_page_status_code(self):
+	  response = self.client.get('/about/')
+	  self.assertEqual(response.status_code, 200)
+#+end_src

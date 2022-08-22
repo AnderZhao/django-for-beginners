@@ -25,7 +25,7 @@ SECRET_KEY = '0fm2j5sl4@!ycx&f-o9lb8*^4p#24d7o!q+t(gspygpw_awlnl'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition

@@ -223,3 +223,45 @@ pages/test.py
 	  response = self.client.get('/about/')
 	  self.assertEqual(response.status_code, 200)
 #+end_src
+*** Local vs Production
+本地代码存在于我们的计算机中，生产代码存在于外部服务器上，将本地代码投入生产时，必须要修改配置
+在 config/settings.py 中。
+
+Django 有两种适用于本地开发的网络服务器：Gunicorn and uWSGI
+
+适用于生产环境的网络服务器我们选择：Heroku
+*** Heroku
+1. 注册 Heroku 账户
+2. 安装 Heroku CLI
+   #+begin_src shell
+     brew install heroku/brew/heroku
+   #+end_src
+3. 登录 Heroku in CLI
+   #+begin_src shell
+     heroku login # 通过浏览器登录
+     heroku longin -i # 通过 CLI 登录
+   #+end_src
+
+
+Deployment checklist:
+1. install Gunicorn
+   #+begin_src shell
+     pipenv insatll gunicorn~=19.9.0
+   #+end_src
+2. add a Procfile file
+   #+begin_src shell
+     touch Procfile
+
+     Procfile
+     web: gunicorn config.wsgi --log-file -
+   #+end_src
+3. update ALLOWED_HOSTS
+   The ALLOWED_HOSTS setting represents which host/domain names
+   our Django site can serve. This is a security measure to prevent
+   HTTP Host header attacks, which are possible even under many
+   seemingly-safe web server configurations.
+
+   #config/settings.py
+   #+begin_src python
+     ALLOWED_HOSTS = [*]
+   #+end_src

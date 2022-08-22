@@ -266,6 +266,7 @@ Deployment checklist:
      ALLOWED_HOSTS = [*]
    #+end_src
 *** Deployment
+⚠️ 确保当前项目所在位置正确
 process:
 1. create a new app on Heroku
    #+begin_src shell
@@ -285,7 +286,12 @@ process:
    #+end_src
 3. push the code up to Heroku
    #+begin_src shell
+     heroku git:remote lit-chamber-19708
      git push heroku main
+     heroku ps:scale web=1 # 最低级别，免费
    #+end_src
 4. start the Heroku server so the app is live
+   #+begin_src shell
+     heroku open
+   #+end_src
 5. visit the app on Heroku's provided URL

@@ -307,3 +307,45 @@ Begin a new project, checklist:
 4. create a new app call posts
 5. update config/setting.py
 
+*** Create a database model
+model used to store and dispaly posts.
+posts/model.py
+#+begin_src python
+  from django.db import models
+
+  # Create your models here.
+  class Post(models.Model):
+    text = models.TextField()
+#+end_src
+
+*** Activating models
+1. First,we create a migrations file with the makemigrations command.
+   Migration files create a reference of any changes to the database
+   models which means we can track changes–and debug errors as
+   necessary–over time.
+   #+begin_src shell
+     python manage.py makemigrations posts
+
+   #+end_src
+2. Second, we build the actual database with the migrate command which
+   executes the instructions in our migrations file.
+   #+begin_src shell
+     python manage.py migrate
+
+   #+end_src
+
+*** Django Admin
+Create a superuser:
+#+begin_src shell
+  python manage.py createsuperuser
+
+#+end_src
+Update posts/admin.py
+#+begin_src python
+  from django.contrib import admin
+  from .models import Post
+
+  # Register your models here.
+  admin.site.register(Post)
+#+end_src
+

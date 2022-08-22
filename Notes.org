@@ -349,3 +349,110 @@ Update posts/admin.py
 #+end_src
 
 *** Views/Templates/URLs
+1. modified posts/views.py
+  #+begin_src python
+    from django.views.generic import ListView
+    from .models import Post
+
+    # Create your views here.
+    class HomePageView(ListView):
+      model = Post
+      template_name = 'home.html'
+      context_object_name = 'all_posts_list'
+  #+end_src
+2. create templates, templates/home.html and modified config/setting.py
+   #+begin_src html
+    <h1>Messages Board Home Page</h1>
+      <ul>
+        {% for post in all_posts_list %}
+          <li>{{ post.text }}</li>
+        {% endfor %}
+      </ul> 
+   #+end_src
+   #+begin_src python
+     ...
+     TEMPLATES = [
+	 ...
+	 'DIRS': [
+	    str(BASE_DIR.joinpath('templates'))
+	],
+	 ...
+     ]
+     ...
+
+   #+end_src
+3. Resolve URLs
+   - modified config/urls.py
+     #+begin_src python
+       from django.contrib import admin
+       from django.urls import path, include
+
+       urlpatterns = [
+         path('admin/', admin.site.urls),
+         path('', include('posts.urls')),
+       ]
+     #+end_src
+   - create posts/urls.py
+     #+begin_src python
+       from django.urls import path
+       from .views import HomePageView
+
+       urlpatterns = [
+         path('', HomePageView.as_view(), name='home'),
+       ]
+     #+end_src 
+*** Adding New Posts
+use Admin interface add posts.
+*** Tests
+1. 测试模型
+posts/test.py
+#+begin_src python
+  from django.test import TestCase
+  from .models import Post
+
+  # Create your tests here.
+  class PostModelTest(TestCase):
+
+      def setUp(self):
+	  # 创建一个 Post 对象
+	  Post.objects.create(text='just a test')
+
+      def test_text_content(self):
+	  # 获取 ID 为 1 的 Post 对象
+	  post = Post.objects.get(id=1)
+	  # 将 post 的 text 内容赋值给 expected_object_name
+	  expected_object_name = f'{post.text}'
+	  # 比较 expected_object_name 和 ‘just a test’ 是否一致
+	  self.assertEqual(expected_object_name, 'just a test')
+#+end_src
+2. 测试页面
+  - does it actually exist and return a HTTP 200 response?
+  - doesituseHomePageViewastheview?
+  - doesitusehome.htmlasthetemplate?
+#+begin_src python
+  from django.test import TestCase
+  from django.urls import reverse
+  from .models import Post
+
+  # Create your tests here.
+  class PostModelTest(TestCase):
+    ...
+
+  class HomePageViewTest(TestCase):
+      def setUp(self):
+	  Post.objects.create(text="this is another test")
+
+      def test_view_url_exists_at_proper_location(self):
+	  resp = self.client.get('/')
+	  self.assertEqual(resp.status_code, 200)
+
+      def test_view_url_by_name(self):
+	  resp = self.client.get(reverse('home'))
+	  self.assertEqual(resp.status_code, 200)
+
+      def test_view_uses_correct_template(self):
+	  resp = self.client.get(reverse('home'))
+	  self.assertEqual(resp.status_code, 200)
+	  self.assertTemplateUsed(resp, 'home.html')
+
+#+end_src

@@ -295,3 +295,15 @@ process:
      heroku open
    #+end_src
 5. visit the app on Heroku's provided URL
+** Message Board App
+Django ORM is Object relational mapper, built-in support for multiple
+database backends: PostgreSQL, MySQL, MariaDB, Oracle, or SQLite.
+
+*** Initial Set Up
+Begin a new project, checklist:
+1. create a new directory
+2. install Django in a new virtual environment
+3. create a new project called config
+4. create a new app call posts
+5. update config/setting.py
+

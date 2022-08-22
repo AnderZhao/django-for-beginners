@@ -298,7 +298,6 @@ process:
 ** Message Board App
 Django ORM is Object relational mapper, built-in support for multiple
 database backends: PostgreSQL, MySQL, MariaDB, Oracle, or SQLite.
-
 *** Initial Set Up
 Begin a new project, checklist:
 1. create a new directory
@@ -349,3 +348,4 @@ Update posts/admin.py
   admin.site.register(Post)
 #+end_src
 
+*** Views/Templates/URLs

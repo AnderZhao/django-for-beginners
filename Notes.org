@@ -456,3 +456,34 @@ posts/test.py
 	  self.assertTemplateUsed(resp, 'home.html')
 
 #+end_src
+** Blog App
+*** Initial Set up
+1. create a new directory for our code
+2. install Django in a new virtual environment
+3. create a new Django project call config
+4. create a new app blog
+5. perform a migration to set up the database
+6. update config/settings.py
+
+*** Database Models
+ForeignKey 类型允许多对一关系
+
+*** Admin
+创建 superuser 账户
+#+begin_src shell
+  python manage.py createsuperuser
+#+end_src
+
+modified blog/admin.py
+#+begin_src python
+  from django.contrib import admin
+  from .models import Post
+
+  # Register your models here.
+  admin.site.register(Post)
+#+end_src
+
+通过 Admin 面板添加了两条数据
+
+*** URLs, Views, Templates
+
